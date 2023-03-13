@@ -56,12 +56,45 @@ cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
-等個大概三分鐘不到，init就會建立完畢，接著就是基礎的flannel和污點消除，污點消除後確認一下Node狀態484已經Ready了
+等個大概三分鐘不到，init就會建立完畢，接著就是基礎的flannel和污點消除，可能之後可以試試看用Calico取代flannel進行更高階的操作？污點消除後確認一下Node狀態484已經Ready了
 ```
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 kubectl taint nodes --all node-role.kubernetes.io/master-
 ```
 
-現在是istio時間
+現在是istio時間，下載、導入路徑、安裝、還有往default的namespace裡面設定自動加sidecar，應該可以透過label的方式固定某些Pod不加
+```
+curl -L https://istio.io/downloadIstio | sh -
+cd istio-1.17.1 #可能因為最新版更改所以要自己注意
+export PATH=$PWD/bin:$PATH
+istioctl install --set profile=demo -y
+kubectl label namespace default istio-injection=enabled
+```
+
+但是istio和matrics服務，我最喜歡：
+```
+kubectl get configmap --all-namespace
+kubectl edit configmap kubelet-config-1.23.0 --namespace=kube-system
 ```
 ```
+vim /var/lib/kubelet/config.yaml
+```
+更改格式如下：
+```
+kind: KubeletConfiguration
+serverTLSBootstrap: true
+```
+更改後重開kubelet
+```
+systemctl restart kubelet
+```
+重啟需要一小段時間，打個手槍什麼的之後再看新證書並准許他
+```
+kubectl get csr
+kubectl certificate approve <來自kubelet-serving的那個>
+```
+准許後再裝metrics-server
+```
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.6.2/components.yaml
+```
+今天先到這邊，剩下的等我懶癌發作去世之後再寫
