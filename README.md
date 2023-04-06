@@ -74,14 +74,13 @@ kubectl label namespace default istio-injection=enabled
 但是istio和matrics服務，我最喜歡：
 ```
 kubectl get configmap --all-namespaces
-kubectl edit configmap kubelet-config-1.23.0 --namespace=kube-system #22.04會發生config是1.23沒有後面的0的問題，複製貼上注意
+kubectl edit configmap kubelet-config-1.23 --namespace=kube-system
 ```
 ```
 vim /var/lib/kubelet/config.yaml
 ```
 以上兩個動作都需要更改以加入新內容，更改格式如下：
 ```
-kind: KubeletConfiguration
 serverTLSBootstrap: true
 ```
 更改後重開kubelet
