@@ -65,7 +65,7 @@ kubectl taint nodes --all node-role.kubernetes.io/master-
 現在是istio時間，下載、導入路徑、安裝、還有往default的namespace裡面設定自動加sidecar，應該可以透過label的方式固定某些Pod不加
 ```
 curl -L https://istio.io/downloadIstio | sh -
-cd istio-1.17.1 #可能因為最新版更改所以要自己注意
+cd istio-1.17.2 #可能因為最新版更改所以要自己注意
 export PATH=$PWD/bin:$PATH
 istioctl install --set profile=demo -y
 kubectl label namespace default istio-injection=enabled
