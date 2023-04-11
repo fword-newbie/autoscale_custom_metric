@@ -61,6 +61,16 @@ chown $(id -u):$(id -g) $HOME/.kube/config
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 kubectl taint nodes --all node-role.kubernetes.io/master-
 ```
+接下來，如果有想要將第二台機器加入叢集的話，先重複以上步驟直到kubeadm init不要做，將master-node在建立時所給予的token和sha256在預定的worker-node上面輸入
+```
+kubeadm join 10.20.1.11:6443 --token ***** \
+	--discovery-token-ca-cert-hash sha256:*****
+```
+
+然後將worker-node角色命名
+```
+kubectl label node <workernode name> kubernetes.io/role=worker
+```
 
 現在是istio時間，下載、導入路徑、安裝、還有往default的namespace裡面設定自動加sidecar，應該可以透過label的方式固定某些Pod不加
 ```
