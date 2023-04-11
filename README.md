@@ -69,7 +69,7 @@ kubeadm join 10.20.1.11:6443 --token ***** \
 
 然後將worker-node角色命名
 ```
-kubectl label node <workernode name> kubernetes.io/role=worker
+kubectl label node k8s-worker kubernetes.io/role=worker
 ```
 
 現在是istio時間，下載、導入路徑、安裝、還有往default的namespace裡面設定自動加sidecar，應該可以透過label的方式固定某些Pod不加
