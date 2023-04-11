@@ -104,6 +104,7 @@ kubectl certificate approve <來自kubelet-serving的那個>
 ```
 准許後再裝metrics-server
 ```
-kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.6.2/components.yaml
+cd formyjournal
+kubectl apply -f components.yaml
 ```
 今天先到這邊，剩下的等我懶癌發作去世之後再寫
