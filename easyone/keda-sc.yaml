@@ -9,7 +9,8 @@ spec:
   - type: prometheus
     metadata:
       serverAddress: http://10.20.1.11:9090
-      query: sum(rate(http_requests_total{kubernetes_pod_name="puyuan-bc875847f-tgs2f"}[1m]))
+      metricName: django_http_requests_total_by_method_total
+      query: sum(rate(django_http_requests_total_by_method_total{instance="10.101.95.109:5000"}[1m]))
       threshold: '10'
       minReplicaCount: 1'
       maxReplicaCount: '10'
