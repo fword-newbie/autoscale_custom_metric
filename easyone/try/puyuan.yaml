@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: puyuan
+  labels:
+    auto_build_vpa: ye
 spec:
   selector:
     matchLabels:
@@ -14,10 +16,11 @@ spec:
       containers:
       - name: puyuan
         image: everynamehavebeenuse/app1:pu
+        imagePullPolicy: IfNotPresent
         command: ["python3","manage.py","runserver","0.0.0.0:80","--noreload"]
-        resources:
-          requests:
-            cpu: "150m"
+        # resources:
+        #   requests:
+        #     cpu: "150m"
 ---
 apiVersion: v1
 kind: Service
@@ -44,3 +47,27 @@ spec:
     - protocol: TCP
       port: 80
       nodePort: 31112
+---
+# apiVersion: autoscaling.k8s.io/v1
+# kind: VerticalPodAutoscaler
+# metadata:
+#   name: puyuan-vpa
+# spec:
+#   targetRef:
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     name: "puyuan"
+#   # resourcePolicy:
+#   #   containerPolicies:
+#   #     - containerName: puyuan
+#   #       minAllowed:
+#   #         cpu: 50m 
+#   #         memory: 50Mi
+#   #       maxAllowed:
+#   #         cpu: 500m
+#   #         memory: 500Mi
+#   #       controlledResources: ["cpu", "memory"]
+#   updatePolicy:
+#     updateMode: "Off"
+
+

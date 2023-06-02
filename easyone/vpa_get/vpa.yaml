@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vpaget
+spec:
+  containers:
+  - name: vpaget
+    image: vpa
+    imagePullPolicy: Never
+    command:
+      - "sleep"
+      - "604800"
+    # ports:
+    # - containerPort: 388
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pods-list
+rules:
+- apiGroups: ["*"]
+  resources: ["customobjects","namespaces","pods","verticalpodautoscalers" ]
+  verbs: ["get","list"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pods-list
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: pods-list
+  apiGroup: rbac.authorization.k8s.io

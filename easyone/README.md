@@ -24,14 +24,6 @@ helm repo update
 ```
 
 
-把那個該死的django普圓部署上去才能進行後續的部署：
-```
-cd try
-kubectl apply -f puyuan.yaml
-cd ..
-```
-
-
 helm 使用balue.yaml部署Prometheus(透過additionalScrapeConfigs這個參數去改，具體來說是先部署pu，然後用clusterip的service改這邊的target的IP和port)：
 ```
 helm install -f balue.yaml prometheus prometheus-community/kube-prometheus-stack -n pro --create-namespace #部署
@@ -39,15 +31,7 @@ helm uninstall prometheus prometheus-community/kube-prometheus-stack -n pro #解
 ```
 
 
-最後就是k6的部份（這邊等到要測試再改）：
-```
-cd docker_k6
-kubectl apply -f k6.yaml #要改的話用js的改
-cd ..
-```
-
-
-如果有需要的話，可以用grafana.yaml開nodeport去看網頁版：
+如果有需要的話，可以用grafana.yaml開nodeport去看網頁版（幹你娘變了，只能看prometheus的，grafana的失效了）：
 ```
 kubectl apply -f grafana.yaml
 ```
@@ -56,4 +40,37 @@ kubectl apply -f grafana.yaml
 部署keda：
 ```
 helm install keda kedacore/keda --version 2.9 -n keda --create-namespace
+kubectl apply -f dummy.yaml
+```
+
+
+把那個該死的django普圓部署上去才能進行後續的部署：
+```
+cd try
+kubectl apply -f puyuan.yaml
+cd ..
+```
+
+
+部署自動建立vpa，條件是label有"auto_build_vpa=ye"，你各位image我設定的是本地搜尋啊，記得建立本地的
+```
+cd auto_build_vpa
+kubectl apply -f .
+cd ..
+```
+
+
+部署自動取得vpa資訊
+```
+cd vpa_get
+kubectl apply -f .
+cd ..
+```
+
+
+最後就是k6的部份（k6永遠最後）：
+```
+cd docker_k6
+kubectl apply -f k6.yaml #要改的話用js的改
+cd ..
 ```
