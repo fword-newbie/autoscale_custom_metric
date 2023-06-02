@@ -40,7 +40,7 @@ kubectl apply -f grafana.yaml
 部署keda：
 ```
 helm install keda kedacore/keda --version 2.9 -n keda --create-namespace
-kubectl apply -f dummy.yaml
+kubectl apply -f dummy.yaml #這個問題後續要解決
 ```
 
 
@@ -48,6 +48,15 @@ kubectl apply -f dummy.yaml
 ```
 cd try
 kubectl apply -f puyuan.yaml
+cd ..
+```
+
+
+部署VPA，之前有建過就要先Down
+```
+cd vertical-pod-autoscaler
+./hack/vpa-up.sh
+# ./hack/vpa-down.sh
 cd ..
 ```
 
