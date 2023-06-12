@@ -61,19 +61,25 @@ cd ..
 ```
 
 
-部署自動建立vpa，條件是label有"auto_build_vpa=ye"，你各位image我設定的是本地搜尋啊，記得建立本地的
+部署自動建立vpa和自動獲取vpa資訊，條件是label有"auto_build_vpa=ye"，你各位image我設定的是本地搜尋啊，記得建立本地的
 ```
-cd auto_build_vpa
-kubectl apply -f .
+kubectl apply -f vpa_in_one.yaml
+```
+
+
+cloneyaml服務負責將進來的檔案「999.yaml」轉為實際檔名並且加上v2，send_to_host服務接收POST請求後轉送POST請求給storgev2，applyv2是失敗的（媽的k8s_client到現在還是不回我問題）
+```
+cd cloneyaml
+kubectl apply -f cloneyaml.yaml
 cd ..
 ```
 
 
-部署自動取得vpa資訊
+storgev2就是開一個Flask API介面，接收send_to_host的POST請求並建立該V2 YAML。
 ```
-cd vpa_get
-kubectl apply -f .
-cd ..
+cd storgev2
+python3 storgev2.py
+#然後開一個新的command line。
 ```
 
 

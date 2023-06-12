@@ -11,63 +11,13 @@ spec:
   template:
     metadata:
       labels:
+        sidecar.istio.io/inject: "true"
         app: puyuan
+        version: v1
     spec:
       containers:
       - name: puyuan
         image: everynamehavebeenuse/app1:pu
         imagePullPolicy: IfNotPresent
         command: ["python3","manage.py","runserver","0.0.0.0:80","--noreload"]
-        # resources:
-        #   requests:
-        #     cpu: "150m"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: puyuan-s
-spec:
-  selector:
-    app: puyuan
-  ports:
-    - protocol: TCP
-      port: 5000
-      targetPort: 80
-  clusterIP: 10.101.95.109
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: puyuan-np
-spec:
-  type: NodePort
-  selector:
-    app: puyuan
-  ports:
-    - protocol: TCP
-      port: 80
-      nodePort: 31112
----
-# apiVersion: autoscaling.k8s.io/v1
-# kind: VerticalPodAutoscaler
-# metadata:
-#   name: puyuan-vpa
-# spec:
-#   targetRef:
-#     apiVersion: apps/v1
-#     kind: Deployment
-#     name: "puyuan"
-#   # resourcePolicy:
-#   #   containerPolicies:
-#   #     - containerName: puyuan
-#   #       minAllowed:
-#   #         cpu: 50m 
-#   #         memory: 50Mi
-#   #       maxAllowed:
-#   #         cpu: 500m
-#   #         memory: 500Mi
-#   #       controlledResources: ["cpu", "memory"]
-#   updatePolicy:
-#     updateMode: "Off"
-
 

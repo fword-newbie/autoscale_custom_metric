@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: puyuan-s
+spec:
+  selector:
+    app: puyuan
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 80
+  clusterIP: 10.101.95.109
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: puyuan-np
+spec:
+  type: NodePort
+  selector:
+    app: puyuan
+  ports:
+    - protocol: TCP
+      port: 80
+      nodePort: 31112

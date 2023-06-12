@@ -43,18 +43,10 @@ while True:
     for deployment in deploy_list.items:
         deployment_name = deployment.metadata.name
         namespace = deployment.metadata.namespace
-        # 在這裡可以執行你想要的自動化操作
-        # existing_vpa = vpa_api.get_namespaced_custom_object(
-        #     group="autoscaling.k8s.io",
-        #     version="v1",
-        #     namespace=namespace,
-        #     plural="verticalpodautoscalers",
-        #     name=deployment_name,
-        # )
-
-        #若該VPA存在就跳出循環
+        # 在這裡執行自動化操作
+        # 若該VPA存在就跳出循環，
         if deployment_name+"-vpa" in vpa_names:
-            print(f"VPA 'vpa-{deployment_name}' already exists. Skipping creation.")
+            # print(f"VPA 'vpa-{deployment_name}' already exists. Skipping creation.")
             continue
 
         vpa_spec = {    
