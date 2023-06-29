@@ -14,7 +14,7 @@ RUN pip3 install kubernetes
 # EXPOSE 8080
 
 # 執行 Python 程式碼
-#  CMD ["python3","atb_vpa.py"]
+CMD ["python3","atb_vpa.py"]
 
 
 

@@ -7,9 +7,8 @@ spec:
   - name: cloneyaml
     image: cloneyaml
     imagePullPolicy: Never
-    command:
-      - "sleep"
-      - "604800"
+    command: ["python3"]
+    args: ["send_to_host.py"]
 ---
 apiVersion: v1
 kind: Service

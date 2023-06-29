@@ -68,9 +68,13 @@ kubectl apply -f vpa_in_one.yaml
 
 
 cloneyaml服務負責將進來的檔案「999.yaml」轉為實際檔名並且加上v2，send_to_host服務接收POST請求後轉送POST請求給storgev2，applyv2是失敗的（媽的k8s_client到現在還是不回我問題）
+這裡我懶得用成兩個container，預設已經有send_to_host，乖乖apply裡面的cloneyaml.py吧。
 ```
 cd cloneyaml
 kubectl apply -f cloneyaml.yaml
+kubectl exec -it cloneyaml -- /bin/bash
+python3 cloneyaml.py
+exit
 cd ..
 ```
 
@@ -89,3 +93,6 @@ cd docker_k6
 kubectl apply -f k6.yaml #要改的話用js的改
 cd ..
 ```
+
+
+try下有一個c.sh，要用那個apply yaml，具體來說就是./c.sh puyuan.yaml這樣，因為python客戶端不給Pod內部apply yaml。

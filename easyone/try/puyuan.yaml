@@ -1,16 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: puyuan
+  name: puyuan-v1
   labels:
     auto_build_vpa: ye
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: puyuan
+      version: v1
   template:
     metadata:
       labels:
+        # istio: ingressgateway
         sidecar.istio.io/inject: "true"
         app: puyuan
         version: v1

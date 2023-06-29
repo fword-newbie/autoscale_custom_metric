@@ -46,6 +46,7 @@ def export_deployment_yaml():
         deployment_yaml = list(yaml.load_all(f,yaml.FullLoader))
         deployment_name = deployment_yaml[0]["metadata"]["name"]
         deployment_yaml[0]["spec"]["template"]["metadata"]["labels"]["version"] = "v2"
+        deployment_yaml[0]["spec"]["selector"]["matchLabels"]["version"] = "v2"
         new_file_name = f"{deployment_name}.yaml"
         new_file_path = os.path.join(current_dir, new_file_name)
 
