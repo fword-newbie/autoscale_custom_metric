@@ -13,7 +13,7 @@ export const options = {
 };
 
 export default function () {
-  let res = http.get("http://puyuan-s:5000/api/shock");
+  let res = http.get("http://puyuan:8000/api/shock");
   // let res = http.get("http://httpcpuwaste-n:31112/adam");
   check(res, { "status was 200": (r) => r.status == 200 });
   sleep(1);

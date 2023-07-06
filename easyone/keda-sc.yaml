@@ -10,7 +10,7 @@ spec:
     metadata:
       serverAddress: http://10.20.1.11:9090
       metricName: django_http_requests_total_by_method_total
-      query: sum(rate(django_http_requests_total_by_method_total{instance="10.101.95.109:8000"}[1m]))
+      query: sum(rate(django_http_requests_total_by_method_total{instance="10.101.95.109:8000", method="POST"}[1m]))
       threshold: '10'
       minReplicaCount: 1'
       maxReplicaCount: '10'

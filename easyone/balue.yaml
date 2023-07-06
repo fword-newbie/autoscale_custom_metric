@@ -2271,7 +2271,7 @@ prometheus:
 
   ## Configure network policy for the prometheus
   networkPolicy:
-    enabled: false
+    enabled: true
 
     ## Flavor of the network policy to use.
     #  Can be:
@@ -2291,6 +2291,40 @@ prometheus:
     # podSelector:
     #   matchLabels:
     #     app: prometheus
+    egress:
+    - {}
+    ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: puyuan
+        namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: default
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: prometheus
+      ports:
+      - port: 9090
+        protocol: TCP
+      - port: 8080
+        protocol: TCP
+    - from:
+      - podSelector:
+          matchLabels:
+            app.kubernetes.io/name: grafana
+      ports:
+      - port: 9090
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app.kubernetes.io/component: prometheus
+        app.kubernetes.io/instance: k8s
+        app.kubernetes.io/name: prometheus
+        app.kubernetes.io/part-of: kube-prometheus
+    policyTypes:
+    - Egress
+    - Ingress
 
   ## Service account for Prometheuses to use.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
@@ -3079,7 +3113,16 @@ prometheus:
       scrape_interval: 10s
       static_configs:
       - targets:
-        - 10.108.25.213:5000
+        - 10.101.95.109:8000
+      # kubernetes_sd_configs:
+      # - role: service
+      # relabel_configs:
+      # - source_labels: [__meta_kubernetes_service_name]
+      #   action: keep
+      #   regex: puyuan
+      # - source_labels: [__meta_kubernetes_namespace]
+      #   action: keep
+      #   regex: pro
     # - job_name: 'django-app'
     #   scrape_interval: 5s
     #   static_configs:

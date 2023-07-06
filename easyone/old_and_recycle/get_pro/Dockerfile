@@ -2,11 +2,10 @@
 FROM python:3.9
 
 # 設定工作目錄
-WORKDIR /auto_build_vpa
+WORKDIR /get_pro
 
 # 將程式碼複製到容器內
-COPY ./atb_vpa.py .
-COPY ./vpaget.sh .
+COPY ./prometheus.py .
 COPY ./pro.sh .
 
 # 安裝 Flask 套件

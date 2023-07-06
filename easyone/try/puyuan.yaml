@@ -15,6 +15,7 @@ spec:
       labels:
         # istio: ingressgateway
         sidecar.istio.io/inject: "true"
+        auto_build_vpa: ye
         app: puyuan
         version: v1
     spec:

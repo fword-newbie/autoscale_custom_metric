@@ -1,11 +1,5 @@
 # LULimsuck
-目前已經做好使用django的django-prometheus配件強行被prometheus監控了（你各位本機測試安裝套件的時候先確認python3 run的是不是root用戶，還有root用戶一般用戶有沒有pip3 install）
-
-
-本次新增的部份是：1.部屬prometheus，並且新增參數(balue.yaml)監控使用django的pu。2.使用pu作為接收網路流量請求的接收方以此提高http請求數量或者CPU使用率，並且藉此讓KEDA使用指標來縮放。
-
-
-目前還缺乏讓KEDA縮放的能力，以及後續或許可以用PredictKube來接續七天後的prometheus的監控，穩定度更高。
+進度目前已經取得VPA和prometheus資料，後續就是用時間序列分析將資料分析和預測。
 
 
 補上安裝和部署的懶人用程式碼，首先是helm：
@@ -21,6 +15,12 @@ helm 新增Keda和Prometheus：
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo add kedacore https://kedacore.github.io/charts
 helm repo update
+```
+
+
+用於資料共享的PVC。
+```
+kubectl apply -f allstorage.yaml
 ```
 
 
@@ -61,7 +61,9 @@ cd ..
 ```
 
 
-部署自動建立vpa和自動獲取vpa資訊，條件是label有"auto_build_vpa=ye"，你各位image我設定的是本地搜尋啊，記得建立本地的
+部署自動建立vpa和自動獲取vpa資訊，條件是label有"auto_build_vpa=ye"，你各位image我設定的是本地搜尋啊，記得建立本地的。
+目前已經把getpro和vpaget兩個應用整合到auto_build_vpa，原始程式碼放在old_and_recycle。
+使用shared volume方式把取得的指標和VPA推薦CPU等資料整合進本機的/home/local-pv。
 ```
 kubectl apply -f vpa_in_one.yaml
 ```
