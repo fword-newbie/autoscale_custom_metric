@@ -2968,7 +2968,7 @@ prometheus:
 
     ## How long to retain metrics
     ##
-    retention: 10d
+    retention: 20m
 
     ## Maximum size of metrics
     ##
@@ -3114,6 +3114,23 @@ prometheus:
       static_configs:
       - targets:
         - 10.101.95.109:8000
+    - job_name: kubernetes-pods
+      kubernetes_sd_configs:
+      - role: pod
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_container_name]
+        regex: (.*)
+        target_label: container
+        replacement: ${1}
+      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: ${1}:${2}
+        target_label: __address__
+      - source_labels: [__meta_kubernetes_pod_container_port_name]
+        regex: (.*)
+        target_label: __metrics_path__
+        replacement: /api/v1/namespaces/kube-system/pods/${1}/metrics
+
       # kubernetes_sd_configs:
       # - role: service
       # relabel_configs:

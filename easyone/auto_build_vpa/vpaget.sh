@@ -1,2 +1,3 @@
 #!/bin/sh
-cp b.txt /shared-data/b.txt
+cp vpa.csv /shared-data/vpa.csv
+rm vpa.csv

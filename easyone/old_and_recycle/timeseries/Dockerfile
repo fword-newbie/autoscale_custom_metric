@@ -2,19 +2,20 @@
 FROM python:3.9
 
 # 設定工作目錄
-WORKDIR /vpa_get
+WORKDIR /timeseries
+
 
 # 將程式碼複製到容器內
-COPY ./vpa.py .
+COPY ./timeseries.py .
 
 # 安裝 Flask 套件
-RUN pip3 install kubernetes
+RUN pip3 install darts
 
 # 開放指定的通訊埠
 # EXPOSE 8080
 
 # 執行 Python 程式碼
-#  CMD ["python3","vpa.py"]
+# CMD ["chmod", "u+x", "*.sh"]
 
 
 

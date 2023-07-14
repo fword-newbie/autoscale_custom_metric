@@ -1,19 +1,41 @@
 import http from "k6/http";
 import { check, sleep } from "k6";
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+var r1 = getRandomInt(4, 20);
+
 export const options = {
   thresholds: {
-    http_req_duration: ["p(99) < 3000"],
+    http_req_duration: ["p(99) < 6000"],
   },
   stages: [
-    { duration: "30s", target: 15 },
-    { duration: "1m", target: 15 },
-    { duration: "20s", target: 0 },
+    { duration: "30s", target: r1 },
+    { duration: "1m", target: r1 },
+    { duration: "20s", target: r1 },
+    { duration: "30s", target: r1 },
+    { duration: "1m", target: r1 },
+    { duration: "20s", target: r1 },
+    { duration: "20s", target: r1 },
+    { duration: "30s", target: r1 },
+    { duration: "1m", target: r1 },
+    { duration: "20s", target: r1 },
+    { duration: "30s", target: r1 },
+    { duration: "1m", target: r1 },
+    { duration: "20s", target: r1 },
+    { duration: "20s", target: r1 },
+    { duration: "40s", target: r1 },
+    { duration: "50s", target: r1 },
+    { duration: "30s", target: r1 },
   ],
 };
 
 export default function () {
-  let res = http.get("http://puyuan:8000/api/shock");
+  let res = http.post("http://puyuan:8000/api/shock");
   // let res = http.get("http://httpcpuwaste-n:31112/adam");
   check(res, { "status was 200": (r) => r.status == 200 });
   sleep(1);

@@ -1,4 +1,4 @@
-# 使用 Python 3.9 為基礎映像
+# 使用 Python 3.9 為基礎image
 FROM python:3.9
 
 # 設定工作目錄
@@ -8,6 +8,7 @@ WORKDIR /auto_build_vpa
 COPY ./atb_vpa.py .
 COPY ./vpaget.sh .
 COPY ./pro.sh .
+COPY ./sent_pro.sh .
 
 # 安裝 Flask 套件
 RUN apt-get update

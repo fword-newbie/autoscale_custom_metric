@@ -23,5 +23,9 @@ spec:
       - name: puyuan
         image: everynamehavebeenuse/app1:pu
         imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 10m
+            memory: 5Mi
         command: ["python3","manage.py","runserver","0.0.0.0:80","--noreload"]
 

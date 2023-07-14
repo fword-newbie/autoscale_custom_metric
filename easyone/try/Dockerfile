@@ -1,4 +1,4 @@
-# 使用 Python 3.9 為基礎映像
+# 使用 Python 3.9 為基礎image
 FROM python:3.7
 
 # 設定工作目錄

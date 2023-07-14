@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request , jsonify
 import json
 import yaml
 import subprocess
@@ -24,6 +24,18 @@ def handle_request():
     subprocess.run(['sh', 'script.sh', jname])
 
     return '請求已處理'
+
+
+@app.route('/if_exist', methods=['POST'])
+def if_vpa_exist():
+    pname=request.get_data("data")
+    pname=pname.decode('utf-8')
+    output=subprocess.run(['bash', 'vpaexist.sh' , pname], capture_output=True, text=True)
+    returndata = {'exist':output.stdout}
+    
+    return jsonify(returndata)
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=800)
