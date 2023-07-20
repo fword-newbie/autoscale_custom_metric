@@ -74,7 +74,7 @@ def vpaget(namespace,deployment_name,cam):
         cam.append({"cpu":recommendations[1]["target"]["cpu"].strip('m')})#"memory":recommendations[1]["target"]["memory"]})
         
     # 指定 CSV 檔案路徑和欄位名稱
-    fieldnames = ["cpu",""] #"memory"]
+    fieldnames = ["cpu"] #"memory"]
 
     # 寫入資料到 CSV 檔案
     with open("vpa.csv", mode="a", newline="") as file:
@@ -178,10 +178,10 @@ while True:
                 # 寫入資料到 CSV 檔案
             print("now apply k6")
             cam=[{"cpu":vpa["status"]["recommendation"]["containerRecommendations"][1]["target"]["cpu"].strip('m')}]#,"memory":vpa["status"]["recommendation"]["containerRecommendations"][1]["target"]["memory"].strip('k')}]
-           # get_vpa = threading.Thread(target=vpaget, args=(namespace,deployment_name,cam))
+            get_vpa = threading.Thread(target=vpaget, args=(namespace,deployment_name,cam))
             get_pro = threading.Thread(target=handle_trigger)
             get_pro.start()
-          #  get_vpa.start()
+            get_vpa.start()
         
     time.sleep(1)
 

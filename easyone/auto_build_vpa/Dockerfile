@@ -1,5 +1,5 @@
 # 使用 Python 3.9 為基礎image
-FROM python:3.9
+FROM python:3.7
 
 # 設定工作目錄
 WORKDIR /auto_build_vpa
@@ -12,7 +12,7 @@ COPY ./sent_pro.sh .
 
 # 安裝 Flask 套件
 RUN apt-get update
-RUN apt-get install -y jq
+RUN apt-get install vim -y
 RUN pip3 install kubernetes
 
 # 開放指定的通訊埠

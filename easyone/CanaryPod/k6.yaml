@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k6-deploy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: k6
+  template:
+    metadata:
+      labels: 
+        app: k6
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - name: k6-container
+        image: everynamehavebeenuse/k6_docker
+        ports:
+        - containerPort: 50000
