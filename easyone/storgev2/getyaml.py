@@ -36,6 +36,21 @@ def if_vpa_exist():
     return jsonify(returndata)
 
 
+@app.route('/canary_p', methods=['POST'])
+def canary_p():
+    # 儲存 YAML 檔案
+    cpu_data=request.get_data("message")
+    post_data=request.get_data("post")
+    with open("puyuanv2.yaml", 'r') as yamlfile:
+        # 使用PyYAML庫來解析YAML數據
+        data = yaml.safe_load(yamlfile)
+        data['spec']['template']['spec']['containers'][0]['resources']['limits']["cpu"]=cpu_data
+    with open("/local-pv/keda-sc.yaml", 'r') as yamlfile:
+        # 使用PyYAML庫來解析YAML數據
+        data = yaml.safe_load(yamlfile)
+        data['spec']['triggers']['metadata']['threshold']=post_data
+    print("ok")
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=800)

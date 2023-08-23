@@ -6,7 +6,7 @@ s3=$3
 prometheus_url="http://prometheus-kube-prometheus-prometheus.pro.svc.cluster.local:9090/api/v1/query_range"
 
 # 使用curl發送GET請求
-response=$(curl -G --data-urlencode "$s1" --data-urlencode "$s2" --data-urlencode "$3" --data-urlencode "step=10s" "$prometheus_url")
+response=$(curl -G  --data-urlencode "$s2" --data-urlencode "$3" --data-urlencode "step=10s" "$prometheus_url")
 
 echo $response
 

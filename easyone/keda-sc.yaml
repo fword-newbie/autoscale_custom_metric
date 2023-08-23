@@ -1,16 +1,20 @@
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: my-app-scaledobject
+  name: mys
 spec:
   scaleTargetRef:
-    name: puyuan
+    name: puyuan-v1
+  minReplicaCount: 2   
+  maxReplicaCount: 10
+  pollingInterval: 10
   triggers:
   - type: prometheus
     metadata:
-      serverAddress: http://10.20.1.11:9090
+      serverAddress: http://prometheus-kube-prometheus-prometheus.pro.svc.cluster.local:9090
       metricName: django_http_requests_total_by_method_total
-      query: sum(rate(django_http_requests_total_by_method_total{instance="10.101.95.109:8000", method="POST"}[1m]))
-      threshold: '10'
-      minReplicaCount: 1'
-      maxReplicaCount: '10'
+      threshold: '20'
+      query: avg(rate(django_http_requests_total_by_method_total{method="POST"}[30s]))
+
+#curl -G --data-urlencode "query=avg(rate(django_http_requests_total_by_method_total{method=\"POST\"}[30s]))" 
+#"http://prometheus-kube-prometheus-prometheus.pro.svc.cluster.local:9090/api/v1/query"

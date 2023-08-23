@@ -29,38 +29,40 @@ def handle_trigger():
     print("istime")
     now_time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
     # 觸發後等待10分鐘後執行        
-    time.sleep(600)
+    time.sleep(10)
     final_time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
     # 組合PromQL查詢語句
     query_post="query=django_http_requests_total_by_method_total{method=\"POST\"}"
     query_cpu="query=node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{container=\"puyuan\"}"
+    query_mem="query=container_memory_usage_bytes{container=\"puyuan\"}"
     query_start="start="+str(now_time)
     query_end="end="+str(final_time)
     
     result1 = subprocess.run(['sh', 'pro.sh',query_post , query_start, query_end], capture_output=True, text=True)
     result2 = subprocess.run(['sh', 'pro.sh',query_cpu , query_start, query_end], capture_output=True, text=True)
+    result3 = subprocess.run(['sh', 'pro.sh',query_mem , query_start, query_end], capture_output=True, text=True)
     result1 = ast.literal_eval(result1.stdout)
     result2 = ast.literal_eval(result2.stdout)
-    print(result2)
+    result3 = ast.literal_eval(result3.stdout)
     prd=[]
     cc=len(result1['data']['result'][0]['values'])
     post_pro=result1['data']['result'][0]['values']
     cpu_usage=result2['data']['result'][0]['values']
+    mem_usage=result2['data']['result'][1]['values']
     for i in range(cc):
-        prd.append({"time":datetime.fromtimestamp(post_pro[i][0]),"post_value":post_pro[i][1],"cpu_usage":cpu_usage[i][1]}*1000)
+        prd.append({"post_value":post_pro[i][1],"cpu_usage":float(cpu_usage[i][1])*1000,"mem_usage":int(mem_usage[i][1])})
 
     # 寫入資料到 CSV 檔案
-    fieldnames = ["time", "post_value", "cpu_usage"] # no get_pro
-    with open("pro.csv", mode="a", newline="") as file:
+    fieldnames = ["post_value", "cpu_usage","mem_usage"] # no get_pro
+    with open("/shared-data/pro.csv", mode="w", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()  # 寫入欄位名稱
         writer.writerows(prd)  # 寫入資料
-    subprocess.run(['sh', 'sent_pro.sh']) #傳送給PVC
 
 
 # 自動獲取VPA資料
 def vpaget(namespace,deployment_name,cam):
-    for i in range(60) :
+    for i in range(1):
         time.sleep(10)
         vpa = vpa_info.get_namespaced_custom_object(
         group="autoscaling.k8s.io",
@@ -71,17 +73,16 @@ def vpaget(namespace,deployment_name,cam):
         )
         
         recommendations = vpa["status"]["recommendation"]["containerRecommendations"]
-        cam.append({"cpu":recommendations[1]["target"]["cpu"].strip('m')})#"memory":recommendations[1]["target"]["memory"]})
+        cam.append({"cpu":recommendations[1]["target"]["cpu"].strip('m'),"memory":recommendations[1]["target"]["memory"].strip('k')})
         
     # 指定 CSV 檔案路徑和欄位名稱
-    fieldnames = ["cpu"] #"memory"]
+    fieldnames = ["cpu","memory"]
 
     # 寫入資料到 CSV 檔案
-    with open("vpa.csv", mode="a", newline="") as file:
+    with open("/shared-data/vpa.csv", mode="a", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()  # 寫入欄位名稱
         writer.writerows(cam)  # 寫入資料
-    subprocess.run(['sh', 'vpaget.sh']) #傳送給PVC
 
 
 # 查詢符合標籤的 Deployment
@@ -166,22 +167,30 @@ while True:
             name=deployment_name+"-vpa",
             )
             print("vpa")
-            while not "status" in vpa:
-                vpa = vpa_info.get_namespaced_custom_object(
-                group="autoscaling.k8s.io",
-                version="v1",
-                namespace=namespace,
-                plural="verticalpodautoscalers",
-                name=deployment_name+"-vpa",
-                )
-                time.sleep(1)
+            # limit_l=[]
+            # limit_l.append({"cpu":deployment.spec.template.spec.containers[0].resources.limits["cpu"],"mem":deployment.spec.template.spec.containers[0].resources.limits["memory"]})
+            # csvname = ["cpu", "mem"] # no get_pro
+            # with open("/shared-data/limit.csv", mode="w", newline="") as file:
+            #     writer = csv.DictWriter(file, fieldnames=csvname)
+            #     writer.writeheader()  # 寫入欄位名稱
+            #     writer.writerows(limit_l)  # 寫入資料
+            # while not "status" in vpa:
+            #     vpa = vpa_info.get_namespaced_custom_object(
+            #     group="autoscaling.k8s.io",
+            #     version="v1",
+            #     namespace=namespace,
+            #     plural="verticalpodautoscalers",
+            #     name=deployment_name+"-vpa",
+            #     )
+            #     time.sleep(1)
                 # 寫入資料到 CSV 檔案
             print("now apply k6")
-            cam=[{"cpu":vpa["status"]["recommendation"]["containerRecommendations"][1]["target"]["cpu"].strip('m')}]#,"memory":vpa["status"]["recommendation"]["containerRecommendations"][1]["target"]["memory"].strip('k')}]
-            get_vpa = threading.Thread(target=vpaget, args=(namespace,deployment_name,cam))
+            # cam=[{"cpu":vpa["status"]["recommendation"]["containerRecommendations"][1]["target"]["cpu"].strip('m'),"memory":vpa["status"]["recommendation"]["containerRecommendations"][1]["target"]["memory"].strip('k')}]
+            # get_vpa = threading.Thread(target=vpaget, args=(namespace,deployment_name,cam))
             get_pro = threading.Thread(target=handle_trigger)
             get_pro.start()
-            get_vpa.start()
-        
+            # get_vpa.start()
     time.sleep(1)
 
+
+#curl -G --data-urlencode "query=sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{container=\"puyuan\"})" --data-urlencode "start=2023-07-24T02:31:06.000000Z" --data-urlencode "end=2023-07-24T02:51:06.000000Z" --data-urlencode "step=10s" "http://prometheus-kube-prometheus-prometheus.pro.svc.cluster.local:9090/api/v1/query_range"

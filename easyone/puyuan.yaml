@@ -5,7 +5,7 @@ metadata:
   labels:
     auto_build_vpa: ye
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: puyuan
@@ -13,7 +13,6 @@ spec:
   template:
     metadata:
       labels:
-        # istio: ingressgateway
         sidecar.istio.io/inject: "true"
         auto_build_vpa: ye
         app: puyuan
@@ -21,14 +20,11 @@ spec:
     spec:
       containers:
       - name: puyuan
-        image: everynamehavebeenuse/app1:pu
+        image: pu
         imagePullPolicy: IfNotPresent
         resources:
-          requests:
-            cpu: 10m
-            memory: 5Mi
-          limits:
-            cpu: 300m
-            memory: 200Mi
+          limit:
+            cpu: 100m
+            memory: 50Mi
         command: ["python3","manage.py","runserver","0.0.0.0:80","--noreload"]
 

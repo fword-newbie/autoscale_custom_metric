@@ -16,3 +16,4 @@ RUN pip3 install prometheus_client
 RUN pip3 install django-prometheus
 # 開放指定的通訊埠
 EXPOSE 80
+EXPOSE 8052

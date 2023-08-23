@@ -1,1 +1,35 @@
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCojNS3Tbetdgb74MLi3Y9PyI+dlbrB0Zosg8kwFnm3x4AzyZeHaM68C4SDLK3wj41JkUtVpowwnHexH6jKjKhB3RCQUaJVYGrNbvd/VqsRcRygUgGwhGxarDzzHWtI3KnuOlKsPb35lGEf5Du0ibAt7dtrkkiz1bS65c6IKHgWI4rd8WItpy59Q235ZSljAY0xMbjVrUN7C1CukLc5Inbhl8FkvmY8/26Bsi5rmBUKwCbUS4Oxf1dVmxe4Gqarix45rGsd6z9gTEO2c0Qm1pNTuXp+C+t5KOhx89PA4aEI7GVOi5bU0SFvUSSGuj4zY90s7jwYyw5xMJ0i5UYK3m12SftjzaIhC4Ka5bwhoGEPVkfWnsEVeZ79tgIf5UJyXGHaubkIpLP+XxhkOnklrY0GdRGcy7woC007OT0L9RO/YlKLBOQiecDwn25UzcF5Ae8jNXX7e+mG8BqI+5yD8DwvRphLpBJLsisVFLjJgEB+aST/b1N9T/J8JXzthJfdQSM= user@user-Aspire-V5-573PG
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    auto_build_vpa: ye
+  name: puyuan-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: puyuan
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: puyuan
+        auto_build_vpa: ye
+        sidecar.istio.io/inject: 'true'
+        version: v1
+    spec:
+      containers:
+      - command:
+        - python3
+        - manage.py
+        - runserver
+        - 0.0.0.0:80
+        - --noreload
+        image: pu
+        imagePullPolicy: IfNotPresent
+        name: puyuan
+        resources:
+          requests:
+            cpu: 100m
+            memory: 5Mi
+      terminationGracePeriodSeconds: 5

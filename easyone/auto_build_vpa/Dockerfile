@@ -6,9 +6,8 @@ WORKDIR /auto_build_vpa
 
 # 將程式碼複製到容器內
 COPY ./atb_vpa.py .
-COPY ./vpaget.sh .
 COPY ./pro.sh .
-COPY ./sent_pro.sh .
+
 
 # 安裝 Flask 套件
 RUN apt-get update
