@@ -1,4 +1,4 @@
-# LULimsuck
+# Base
 畢竟是k8s相關，使用kubeadm建立k8s叢集，安裝期間我一律事先sudo su，要實際使用的話再自己加sudo
 在k8s之前先裝Docker：
 ```
