@@ -1,8 +1,6 @@
 # LULimsuck
-這是我目前論文的前配置，但是我爛所以我只有做一點點，希望之後可以補上
-
-首先，畢竟是k8s相關，使用kubeadm建立k8s叢集，安裝期間我一律建議sudo su，
-在k8s之前先裝Docker，問就是爽抄學長：
+畢竟是k8s相關，使用kubeadm建立k8s叢集，安裝期間我一律事先sudo su，要實際使用的話再自己加sudo
+在k8s之前先裝Docker：
 ```
 apt update 
 apt install -y apt-transport-https \
@@ -47,7 +45,7 @@ systemctl daemon-reload
 systemctl restart docker
 ```
 
-然後開始部屬，swapoff好像是每過一段時間就會又重新開啟，假如get pod被拒絕又不是因為權限問題的話，嘗試看看swapoff -a
+然後開始部署，假如get pod被拒絕又不是因為權限問題的話，嘗試看看swapoff -a
 ```
 swapoff -a
 kubeadm init  --pod-network-cidr=10.244.0.0/16
@@ -56,7 +54,7 @@ cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
 ```
 
-等個大概三分鐘不到，init就會建立完畢，接著就是基礎的flannel和污點消除，可能之後可以試試看用Calico取代flannel進行更高階的操作？污點消除後確認一下Node狀態484已經Ready了
+等個大概三分鐘不到，init就會建立完畢，接著就是基礎的flannel和污點消除，之後可以試試看用Calico取代flannel進行更高階的操作，污點消除後確認一下Node狀態484已經Ready了
 ```
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 kubectl taint nodes --all node-role.kubernetes.io/master-
@@ -72,7 +70,7 @@ kubeadm join 10.20.1.11:6443 --token ***** \
 kubectl label node k8s-worker kubernetes.io/role=worker
 ```
 
-現在是istio時間，下載、導入路徑、安裝、還有往default的namespace裡面設定自動加sidecar，應該可以透過label的方式固定某些Pod不加
+現在是istio時間，下載、導入路徑、安裝、還有往default的namespace裡面設定自動加sidecar，可以透過label的方式固定某些Pod不加，如果流量進入的代理不裝的話會不給管流量
 ```
 curl -L https://istio.io/downloadIstio | sh -
 cd istio-1.17.2 #可能因為最新版更改所以要自己注意
@@ -81,7 +79,7 @@ istioctl install --set profile=demo -y
 kubectl label namespace default istio-injection=enabled
 ```
 
-但是istio和matrics服務，我最喜歡：
+istio和matrics服務：
 ```
 kubectl get configmap --all-namespaces
 kubectl edit configmap kubelet-config-1.23 --namespace=kube-system
@@ -97,7 +95,7 @@ serverTLSBootstrap: true
 ```
 systemctl restart kubelet
 ```
-重啟需要一小段時間，打個手槍什麼的之後再看新證書並准許他
+重啟需要一小段時間，上個廁所之後再看新證書並准許他
 ```
 kubectl get csr
 kubectl certificate approve <來自kubelet-serving的那個>
@@ -107,10 +105,4 @@ kubectl certificate approve <來自kubelet-serving的那個>
 cd formyjournal
 kubectl apply -f components.yaml
 ```
-今天先到這邊，剩下的等我懶癌發作去世之後再寫
-幹笑死我想到一個新的東西可以寫，明天遇到老師就問
-假設一個連續的微服務組
-A->B->C
-假如A的用量上升100%需要擴充2個
-於此同時B的用量則會對應上升50%要擴充1個
-C卻會因為A進來的都是甲廠的API因此用量會下降25%要減少一個
+
