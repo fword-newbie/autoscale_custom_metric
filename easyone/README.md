@@ -1,5 +1,5 @@
 # LULimsuck
-進度目前已經取得VPA和prometheus資料，後續就是用時間序列分析將資料分析和預測。
+進度目前已經取得VPA和prometheus資料，後續就是用線性代數將資料分析和預測。
 
 
 補上安裝和部署的懶人用程式碼，首先是helm：
@@ -31,7 +31,7 @@ helm uninstall prometheus prometheus-community/kube-prometheus-stack -n pro #解
 ```
 
 
-如果有需要的話，可以用grafana.yaml開nodeport去看網頁版（幹你娘變了，只能看prometheus的，grafana的失效了）：
+如果有需要的話，可以用grafana.yaml開nodeport去看網頁版：
 ```
 kubectl apply -f grafana.yaml
 ```
@@ -44,7 +44,7 @@ kubectl apply -f dummy.yaml #這個問題後續要解決
 ```
 
 
-把那個該死的django普圓部署上去才能進行後續的部署：
+把那個django部署上去才能進行後續的更改：
 ```
 cd try
 kubectl apply -f puyuan.yaml
@@ -61,16 +61,16 @@ cd ..
 ```
 
 
-部署自動建立vpa和自動獲取vpa資訊，條件是label有"auto_build_vpa=ye"，你各位image我設定的是本地搜尋啊，記得建立本地的。
-目前已經把getpro和vpaget兩個應用整合到auto_build_vpa，原始程式碼放在old_and_recycle。
-使用shared volume方式把取得的指標和VPA推薦CPU等資料整合進本機的/home/local-pv。
+部署自動建立vpa和自動獲取vpa資訊，條件是label有"auto_build_vpa=ye"，image我設定的是本地搜尋啊，記得建立本地的。
+目前已經把getpro和vpaget兩個應用整合到auto_build_vpa，原始程式碼放在old_and_recycle，雖然無用但是保存當紀念。
+使用shared volume方式把取得的指標和VPA推薦CPU等資料整合進本地的/home/local-pv。
 ```
 kubectl apply -f vpa_in_one.yaml
 ```
 
 
-cloneyaml服務負責將進來的檔案「999.yaml」轉為實際檔名並且加上v2，send_to_host服務接收POST請求後轉送POST請求給storgev2，applyv2是失敗的（媽的k8s_client到現在還是不回我問題）
-這裡我懶得用成兩個container，預設已經有send_to_host，乖乖apply裡面的cloneyaml.py吧。
+cloneyaml服務負責將進來的檔案「999.yaml」轉為實際檔名並且加上v2，send_to_host服務接收POST請求後轉送POST請求給storgev2，applyv2是失敗的（k8s_client到現在還是不回我問題）
+這裡我用成一個container，預設已經有send_to_host，記得apply裡面的cloneyaml.py。
 ```
 cd cloneyaml
 kubectl apply -f cloneyaml.yaml
@@ -95,6 +95,3 @@ cd docker_k6
 kubectl apply -f k6.yaml #要改的話用js的改
 cd ..
 ```
-
-
-try下有一個c.sh，要用那個apply yaml，具體來說就是./c.sh puyuan.yaml這樣，因為python客戶端不給Pod內部apply yaml。
